@@ -14,7 +14,6 @@ import { elements, renderLoader, clearLoader } from './views/base';
     - Shopping list obj
     - Linked recipes */
 const state = {};
-window.state = state;
 
 //SEARCH CONTROLLER
 
@@ -109,11 +108,6 @@ const controlList = () => {
 };
 
 //LIKE CONTROLLER
-
-//========================TESTING
-state.likes = new Likes();
-likesView.toggleLikeMenu(state.likes.getNumLikes());
-
 const controlLike = () => {
   if (!state.likes) state.likes = new Likes();
   const currentID = state.recipe.id;
@@ -187,5 +181,3 @@ elements.recipe.addEventListener('click', (e) => {
     controlLike();
   }
 });
-
-window.l = new List();
