@@ -1,9 +1,11 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import List from './models/List';
+import Likes from './models/Likes';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
 import * as listView from './views/listView';
+import * as likesView from './views/likesView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
 /*Global state of app
@@ -85,7 +87,7 @@ const controlRecipe = async () => {
 
       //render recipe
       clearLoader();
-      recipeView.renderRecipe(state.recipe);
+      recipeView.renderRecipe(state.recipe, state.likes.isLiked(id));
     } catch (err) {
       alert('Error processing recipe');
     }
@@ -104,6 +106,37 @@ const controlList = () => {
     const item = state.list.addItem(el.count, el.unit, el.ingredient);
     listView.renderItem(item);
   });
+};
+
+//LIKE CONTROLLER
+
+//========================TESTING
+state.likes = new Likes();
+likesView.toggleLikeMenu(state.likes.getNumLikes());
+
+const controlLike = () => {
+  if (!state.likes) state.likes = new Likes();
+  const currentID = state.recipe.id;
+
+  //user has not liked recipe
+  if (!state.likes.isLiked(currentID)) {
+    //add like
+    const newLike = state.likes.addLike(currentID, state.recipe.title, state.recipe.author, state.recipe.img);
+    //toggle like button
+    likesView.toggleLikeBtn(true);
+
+    //add like to UI
+    likesView.renderLike(newLike);
+    //user has liked recipe
+  } else {
+    //remove like
+    state.likes.deleteLike(currentID);
+    //toggle like button
+    likesView.toggleLikeBtn(false);
+    //remove from UI
+    likesView.deleteLike(currentID);
+  }
+  likesView.toggleLikeMenu(state.likes.getNumLikes());
 };
 
 //handle delete and  update list item evens
@@ -132,12 +165,15 @@ elements.recipe.addEventListener('click', (e) => {
       state.recipe.updateServings('dec');
       recipeView.updateServingsIngredients(state.recipe);
     }
-  }
-  if (e.target.matches('.btn-increase, .btn-increase *')) {
+  } else if (e.target.matches('.btn-increase, .btn-increase *')) {
     state.recipe.updateServings('inc');
     recipeView.updateServingsIngredients(state.recipe);
   } else if (e.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
+    //adding to shopping list
     controlList();
+  } else if (e.target.matches('.recipe__love, .recipe__love *')) {
+    //like controller
+    controlLike();
   }
 });
 
