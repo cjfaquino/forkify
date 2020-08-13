@@ -139,6 +139,17 @@ const controlLike = () => {
   likesView.toggleLikeMenu(state.likes.getNumLikes());
 };
 
+//restore liked recipes on page load
+window.addEventListener('load', () => {
+  state.likes = new Likes();
+  //restore likes
+  state.likes.readStorage();
+  //toggle menu button
+  likesView.toggleLikeMenu(state.likes.getNumLikes());
+  //render existing likes
+  state.likes.likes.forEach((like) => likesView.renderLike(like));
+});
+
 //handle delete and  update list item evens
 elements.shopping.addEventListener('click', (e) => {
   const id = e.target.closest('.shopping__item').dataset.itemid;
