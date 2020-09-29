@@ -539,6 +539,7 @@ body {
   padding: 3rem 4rem;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 .shopping__list {
   list-style: none;
